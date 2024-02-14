@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include "logger.h"
-#define THREAD_COUNT 4
+#define THREAD_COUNT 1024
 
 #define MALLOC_ERR 1
 #define THREAD_JOIN_ERR 2

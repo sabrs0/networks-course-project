@@ -295,21 +295,7 @@ int listen_and_serve(Web_server *server, int clients_cap){
         return -1;
     }
     init_clients_info(clients_info, server->listenfd);
-/*
-вариант как в Стивенсе listing 6.3-6.4 не подойдет,
-потому что у нас потоки и может получиться так, что запрос еще не начал считываться,
-а select снова сработает, тем самым тот же дескриптор, что и на прошлой итерации был готов на чтение,
-на текущей итерации так же будет помечен как готовый на чтение. 
-Поэтому надо отслеживать клиентов, которые: подключены, обрабатываются.
 
-в массиве дескрипторов:
-А. Если -1, то либо занят, либо не подключен вовсе
-Б. Если не -1, то подключен и ожидает обработки.
-Но тут есть проблема   
-    может быть так, что много много дескрипторов будут обрабатываться и будут -1,
-    При этом, могут подключаться новые клиенты и занимать место в массиве дескрипторов
-    И получится так, что обработанные не вернутся в состояние Б.
-*/
     while(server_active){
         //делаем это, так как если дескриптор не готов на чтение - то будет сброшен, но это же не значит, что он отключен,
         //поэтому копируем
@@ -354,7 +340,7 @@ int listen_and_serve(Web_server *server, int clients_cap){
                     }
                     //clients_info->clients_fd[i] = -1;
                     FD_CLR(cur_client_fd, &clients_info->clients_fdset);
-                    add_task(server->pool, new_task((void * (*)(void *))handle_connection, (void *)conn_info));//тут
+                    add_task(server->pool, new_task((void * (*)(void *))handle_connection, (void *)conn_info));
                     if (--nready <= 0){
                         pthread_rwlock_unlock(&clients_info->clients_RWmutex);
                         break;

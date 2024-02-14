@@ -241,9 +241,6 @@ int threadPool_Destructor(ThreadPool *pool){
     for (int i = 0; i < THREAD_COUNT; i ++){
         int err = pthread_join(pool->threads[i], NULL);
         if (err != 0){
-            
-            //freeeee
-            //опасная ошибка
             //printf("threadpool(join)\n");
             return THREAD_JOIN_ERR;
         }
